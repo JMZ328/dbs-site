@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DBS Performance ECU Mapping</title>
+  <meta name="description" content="DBS Performance ECU Mapping offers professional ECU tuning, performance mapping, and optimized driving performance for petrol and diesel vehicles." />
+  <style>
+    :root {
+      --bg: #05070d;
+      --bg-soft: #0c101a;
+      --card: rgba(255,255,255,0.05);
+      --card-strong: rgba(10,12,18,0.82);
+      --text: #f5f7fb;
+      --muted: #c7cbd7;
+      --accent: #e11b22;
+      --accent-soft: #ff5a5f;
+      --silver: #cfd3dc;
+      --gold: #f4b326;
+      --border: rgba(255,255,255,0.1);
+      --glow: 0 0 30px rgba(225,27,34,0.25);
+      --shadow: 0 24px 60px rgba(0,0,0,0.45);
+      --radius: 22px;
+      --max: 1160px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      background:
+        radial-gradient(circle at top right, rgba(225,27,34,0.18), transparent 24%),
+        radial-gradient(circle at left center, rgba(255,255,255,0.06), transparent 22%),
+        linear-gradient(180deg, rgba(8,10,16,0.96), rgba(5,7,13,1));
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.02) 50%, transparent 100%),
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,0.05), transparent 18%),
+        radial-gradient(circle at 80% 15%, rgba(225,27,34,0.08), transparent 16%);
+      mix-blend-mode: screen;
+      opacity: 0.9;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(92%, var(--max));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(12px);
+      background: rgba(5,7,13,0.78);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 10px;
+      flex-wrap: nowrap;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo img {
+      max-height: 140px;
+      width: auto;
+      filter: drop-shadow(0 4px 18px rgba(225,27,34,0.22));
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ff2b31, #ae0810);
+      color: #fff;
+      box-shadow: var(--glow), var(--shadow);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .btn-primary:hover { transform: translateY(-1px); }
+
+    .btn-secondary {
+      border-color: rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+    }
+
+    .hero {
+      padding: 110px 0 74px;
+      position: relative;
+      background:
+        linear-gradient(90deg, rgba(5,7,13,0.92) 0%, rgba(5,7,13,0.76) 35%, rgba(5,7,13,0.55) 55%, rgba(5,7,13,0.78) 100%),
+        linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.52)),
+        url('dbs-banner.png') center center / cover no-repeat;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.42)),
+        radial-gradient(circle at 78% 20%, rgba(225,27,34,0.2), transparent 22%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 34px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(225,27,34,0.12);
+      border: 1px solid rgba(225,27,34,0.28);
+      color: #fff;
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 18px;
+      box-shadow: var(--glow);
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 5vw, 4.8rem);
+      line-height: 0.98;
+      margin: 0 0 18px;
+      letter-spacing: -1.8px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 .silver {
+      color: var(--silver);
+      display: block;
+      font-style: italic;
+      text-shadow: 0 4px 24px rgba(255,255,255,0.08);
+    }
+
+    .hero h1 .red {
+      color: var(--accent);
+      display: block;
+      text-shadow: 0 6px 24px rgba(225,27,34,0.35);
+    }
+
+    .hero p {
+      color: #e3e7f1;
+      font-size: 1.06rem;
+      max-width: 60ch;
+      margin: 0 0 26px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .hero-note {
+      color: var(--gold);
+      font-size: 1rem;
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .hero-card,
+    .card {
+      background: linear-gradient(180deg, rgba(17,20,30,0.92), rgba(7,9,15,0.92));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before,
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-top: 2px solid rgba(225,27,34,0.5);
+      pointer-events: none;
+    }
+
+    .hero-card {
+      padding: 28px;
+      background: linear-gradient(180deg, rgba(10,12,18,0.9), rgba(7,9,15,0.88));
+      backdrop-filter: blur(4px);
+    }
+
+    .hero-card h3,
+    .feature h3,
+    .price-card h3,
+    .testimonial h3,
+    .about h2,
+    .contact h2,
+    .cta h2 {
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+      color: var(--silver);
+    }
+
+    section {
+      padding: 38px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.7rem);
+      margin: 0 0 10px;
+      text-transform: uppercase;
+      letter-spacing: -0.6px;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      max-width: 65ch;
+      margin: 0 0 28px;
+    }
+
+    .features,
+    .pricing,
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature,
+    .price-card,
+    .testimonial {
+      padding: 24px;
+    }
+
+    .feature p,
+    .price-card p,
+    .testimonial p,
+    .about p,
+    .contact p,
+    .cta p {
+      color: var(--muted);
+      margin-bottom: 0;
+    }
+
+    .check {
+      color: #75ff4f;
+      font-weight: 900;
+      margin-right: 8px;
+    }
+
+    .about-wrap,
+    .contact-wrap,
+    .cta-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .about,
+    .contact,
+    .cta {
+      padding: 28px;
+    }
+
+    .price {
+      font-size: 2rem;
+      font-weight: 900;
+      margin: 12px 0;
+      color: var(--silver);
+    }
+
+    .price small {
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    ul.clean {
+      list-style: none;
+      padding: 0;
+      margin: 18px 0 0;
+    }
+
+    ul.clean li {
+      padding: 10px 0;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    ul.clean li:last-child { border-bottom: 0; }
+
+    .cta {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    footer {
+      padding: 30px 0 50px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .logo img {
+        max-height: 90px;
+      }
+
+      .hero-grid,
+      .about-wrap,
+      .contact-wrap,
+      .cta-wrap,
+      .features,
+      .pricing,
+      .testimonials {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        gap: 16px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero {
+        background-position: 68% center;
+        padding: 84px 0 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a href="#home" class="logo"><img src="dbs-logo-transparent.png" alt="DBS Driven by Speed logo"></a>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+        <a href="#pricing">Options</a>
+        <a href="#contact">Contact</a>
+        <a href="#contact" class="btn btn-secondary">Get Started</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Premium ECU tuning and performance mapping</div>
+          <h1><span class="red">Optimize Your Car</span><span class="silver">Performance!</span></h1>
+          <p>
+            DBS Performance ECU Mapping delivers professional tuning for drivers who want increased power and torque, improved fuel efficiency, smoother driving performance, and safe, reliable results tailored to their vehicle.
+          </p>
+          <div class="hero-actions">
+            <a href="https://wa.me/27835563255" class="btn btn-primary" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+            <a href="tel:+27835563255" class="btn btn-secondary">Call Us</a>
+            <a href="#features" class="btn btn-secondary">View Services</a>
+          </div>
+          <div class="hero-note">Driven by speed. Built for smoother, stronger performance.</div>
+        </div>
+
+        <div class="hero-card">
+          <h3 style="margin-top:0;">Performance benefits</h3>
+          <p style="color: var(--muted);">
+            Every tune is built around real-world results so your vehicle feels stronger, smoother, and more responsive where it matters most.
+          </p>
+          <div class="stats">
+            <div class="stat">
+              <strong>More Power</strong>
+              <span>Increased torque feel</span>
+            </div>
+            <div class="stat">
+              <strong>Fuel Efficiency</strong>
+              <span>Optimized daily driving</span>
+            </div>
+            <div class="stat">
+              <strong>Smoother Driving</strong>
+              <span>Refined power delivery</span>
+            </div>
+            <div class="stat">
+              <strong>Safe Tuning</strong>
+              <span>Reliable performance gains</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="container">
+        <h2 class="section-title">Optimize your vehicle</h2>
+        <p class="section-copy">
+          Inspired by the bold DBS look and feel, this site focuses on the core benefits your customers care about most: better response, stronger pull, smoother performance, and dependable tuning.
+        </p>
+        <div class="features">
+          <div class="card feature">
+            <h3>Increased Power & Torque</h3>
+            <p><span class="check">✔</span>Professional ECU mapping designed to unlock stronger acceleration, better pull, and a more responsive drive.</p>
+          </div>
+          <div class="card feature">
+            <h3>Improved Fuel Efficiency</h3>
+            <p><span class="check">✔</span>Optimized tuning aimed at better efficiency in daily driving while keeping performance sharp and usable.</p>
+          </div>
+          <div class="card feature">
+            <h3>Smoother Driving Performance</h3>
+            <p><span class="check">✔</span>Smoother power delivery and refined throttle response for a vehicle that feels better in real-world conditions.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container about-wrap">
+        <div class="card about">
+          <h2 class="section-title">Driven by speed</h2>
+          <p>
+            DBS Performance ECU Mapping is built for drivers who want more from their vehicle without sacrificing reliability. Our approach combines stronger performance with smooth drivability and a premium tuning experience.
+          </p>
+        </div>
+        <div class="card about">
+          <h2 class="section-title">Safe & reliable tuning</h2>
+          <p>
+            We focus on clean results, dependable tuning, and a setup that matches your goals. Whether you want better daily drivability or more exciting performance, the tune is built around your vehicle.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing">
+      <div class="container">
+        <h2 class="section-title">Tuning options</h2>
+        <p class="section-copy">
+          Every vehicle is different. Use these packages as a starting point, or replace them with your exact offers and pricing.
+        </p>
+        <div class="pricing">
+          <div class="card price-card">
+            <h3>Stage 1 Tune</h3>
+            
+            <p>Ideal for standard vehicles looking for improved performance and drivability.</p>
+            <ul class="clean">
+              <li>Improved throttle response</li>
+              <li>Smoother power delivery</li>
+              <li>Vehicle-specific tuning</li>
+            </ul>
+          </div>
+          <div class="card price-card">
+            <h3>Custom Performance Setup</h3>
+            
+            <p>For modified vehicles or drivers looking for a more tailored performance result.</p>
+            <ul class="clean">
+              <li>Setup-based tuning</li>
+              <li>Performance-focused results</li>
+              <li>Personal consultation</li>
+            </ul>
+          </div>
+          <div class="card price-card">
+            <h3>Fleet or Specialized Vehicles</h3>
+            
+            <p>For business fleets, towing vehicles, or applications needing specific optimization goals.</p>
+            <ul class="clean">
+              <li>Driveability-focused tuning</li>
+              <li>Usage-specific optimization</li>
+              <li>Tailored support</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container contact-wrap">
+        <div class="card contact">
+          <h2 class="section-title">Contact us</h2>
+          <p>
+            Ready to upgrade your vehicle’s performance? Get in touch to discuss your vehicle, your goals, and the best tuning solution for your setup.
+          </p>
+          <ul class="clean">
+            <li>Email: johan@dbs-sa.co.za</li>
+            <li>Phone / WhatsApp: 083 55 632 55</li>
+            <li>Location: Johannesburg, South Africa</li>
+          </ul>
+        </div>
+        <div class="card cta">
+          <h2 class="section-title">Ready for better performance?</h2>
+          <p>Contact DBS Performance ECU Mapping and let’s discuss the right solution for your vehicle.</p>
+          <div style="margin-top: 20px;">
+            <a href="https://wa.me/27835563255" class="btn btn-primary" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-row">
+      <div>© 2026 DBS Performance ECU Mapping. All rights reserved.</div>
+      <div>Driven by Speed • DBS Performance ECU Mapping</div>
+    </div>
+  </footer>
+</body>
+</html>
